@@ -12,7 +12,7 @@ st.write("## Ce este sănătatea financiară?!")
 st.write("- Sănătatea Financiară este libertatea inimii și minții față de orice îngrijorare “Ce dacă” a vieții.")
 schimb = st.button("# Let's Go")
 if schimb:
-   switch_page("pașii de acțiune")
+   switch_page("expence manager")
 
 
 

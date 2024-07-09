@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
-
+import os
 
 st.write("# Expence Manager")
 st.write("- Ca să cheltui inteligent ai nevoie de un buget")
@@ -18,8 +18,11 @@ option = st.selectbox(
     ("Ienuarie", "Februarie", "Martie","Aprilie","Mai","Iunie","Iulie","August","Septembrie","Octombrie","Noiembrie","Decembrie"),index=None)
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #Functia de calcul a cheltuierilor pentru fiecare luna
-def Ien():#pui ca parametru luni si acolo unde ai nevoie
-    with open("Luni.2024\Ien.txt","r") as f:
+def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai nevoie
+    print(luna)
+    print(PathLunaPrecedenta)
+    print(os.curdir)
+    with open(f"Luni.2024/{luna}.txt","r") as f:
         data = f.readlines()
         lista = []
         for i in data:
@@ -40,7 +43,7 @@ def Ien():#pui ca parametru luni si acolo unde ai nevoie
     st.write("## Graficul Bugetului")
     radiobut = st.radio("",["Luna precedenta","Anul precedent"],horizontal=True)
     if radiobut == "Anul precedent":
-        with open("Luni.2023\Ien.txt","r") as file:
+        with open(f"Luni.2023\{luna}.txt","r") as file:
             data = file.readlines()
             listaIen23 = []
             for i in data:
@@ -51,26 +54,36 @@ def Ien():#pui ca parametru luni si acolo unde ai nevoie
         chart_data1 = pd.DataFrame(
         {
             "Tipul":np.array(["🥗","🏠"]),
-            "Ienuarie(2024)":np.array([lista[7],lista[8]]),
-            "Ienuarie(2023)":np.array([listaIen23[7],listaIen23[8]])
+            f"{luna}(2024)":np.array([lista[7],lista[8]]),
+            f"{luna}(2023)":np.array([listaIen23[7],listaIen23[8]]),
         })
-        st.bar_chart(chart_data1, x = "Tipul", y = ["Ienuarie(2024)","Ienuarie(2023)"], color = ["#e54b22", "#abd1ff"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
+        st.bar_chart(chart_data1, x = "Tipul", y = [f"{luna}(2024)",f"{luna}(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
     if radiobut == "Luna precedenta":
-        with open("Luni.2023\dec.txt","r") as file:
+        with open(f"{PathLunaPrecedenta}","r") as file:
             data = file.readlines()
             listaIen23 = []
             for i in data:
                 noN = i.replace("\n","")
                 splited = noN.split(",")
                 listaIen23.append(float(splited[0]))
-    
-        chart_data = pd.DataFrame(
-        {
-            "Tipul":np.array(["🥗","🏠"]),
-            "Ienuarie(2024)":np.array([lista[7],lista[8]]),
-            "Decembrie(2023)":np.array([listaIen23[7],listaIen23[8]])
-        })
-        st.bar_chart(chart_data, x = "Tipul", y = ["Decembrie(2023)","Ienuarie(2024)"], color = ["#e54b22", "#abd1ff"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
+        if luna == "Ienuarie": 
+            chart_data = pd.DataFrame(
+            {
+                "Tipul":np.array(["🥗","🏠"]),
+                "Ienuarie(2024)":np.array([lista[7],lista[8]]),
+                "Decembrie(2023)":np.array([listaIen23[7],listaIen23[8]])
+            })
+            st.bar_chart(chart_data, x = "Tipul", y = ["Ienuarie(2024)","Decembrie(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
+        else:
+            path = rf"{PathLunaPrecedenta}"
+            resultat = os.path.basename(path).replace(".txt","")
+            chart_data = pd.DataFrame(
+            {
+                "Tipul":np.array(["🥗","🏠"]),
+                f"{luna}":np.array([lista[7],lista[8]]),
+                f"{resultat}":np.array([listaIen23[7],listaIen23[8]])
+            })
+            st.bar_chart(chart_data, x = "Tipul", y = [f"{resultat}",f"{luna}"], color = [ "#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
     st.write("## ------------------------------------------------------------")
     #Introducerea datelor cheltuieli
     st.write("# Cheltuieli")
@@ -87,7 +100,7 @@ def Ien():#pui ca parametru luni si acolo unde ai nevoie
     col1.write(f"## Total: {total}")
     submit = st.button("Expediaza Date")
     if submit:
-        with open("Luni.2024\Ien.txt","w") as f:
+        with open(f"Luni.2024\{luna}.txt","w") as f:
             f.write(str(mancare) + "\n")
             f.write(str(gazda) + "\n")
             f.write(str(comunale) + "\n")
@@ -98,7 +111,7 @@ def Ien():#pui ca parametru luni si acolo unde ai nevoie
             f.write(str(salariu) + "\n")
             f.write(str(venitPasiv) + "\n")
             f.write(str(total1))
-    with open("Luni.2024\Ien.txt","r") as f:#citim a doua oara doc ca sa nu apasam de doua ori butonul
+    with open(f"Luni.2024\{luna}.txt","r") as f:#citim a doua oara doc ca sa nu apasam de doua ori butonul
         data = f.readlines()
         lista = []
         for i in data:
@@ -110,7 +123,7 @@ def Ien():#pui ca parametru luni si acolo unde ai nevoie
     st.write("## Graficul Cheltuierilor")
     radiobut = st.radio("",["Luna trecuta","Anul trecut"],horizontal=True)
     if radiobut == "Anul trecut":
-        with open("Luni.2023\Ien.txt","r") as file:
+        with open(f"Luni.2023\{luna}.txt","r") as file:
             data = file.readlines()
             listaIen23 = []
             for i in data:
@@ -120,32 +133,48 @@ def Ien():#pui ca parametru luni si acolo unde ai nevoie
         chart_data = pd.DataFrame(
         {
             "Tipul":np.array(["1_🥗","2_🏠","3_❄️","4_💳","5_🚌","6_💸"]),
-            "Ienuarie(2024)":np.array([lista[0],lista[1],lista[2],lista[3],lista[4],lista[5]]),
-            "Ienuarie(2023)":np.array([listaIen23[0],listaIen23[1],listaIen23[2],listaIen23[3],listaIen23[4],listaIen23[5]])
+            f"{luna}(2024)":np.array([lista[0],lista[1],lista[2],lista[3],lista[4],lista[5]]),
+            f"{luna}(2023)":np.array([listaIen23[0],listaIen23[1],listaIen23[2],listaIen23[3],listaIen23[4],listaIen23[5]])
         })
-        st.line_chart(chart_data, x = "Tipul", y = ["Ienuarie(2024)","Ienuarie(2023)"], color = ["#e54b22", "#abd1ff"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport            Neprevăzute")
+        st.line_chart(chart_data, x = "Tipul", y = [f"{luna}(2024)",f"{luna}(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport            Neprevăzute")
     if radiobut == "Luna trecuta":   
-        with open("Luni.2023\dec.txt","r") as file:
+        with open(f"{PathLunaPrecedenta}","r") as file:
             data = file.readlines()
             listaIen23 = []
             for i in data:
                 noN = i.replace("\n","")
                 splited = noN.split(",")
                 listaIen23.append(float(splited[0]))
-    
-        chart_data = pd.DataFrame(
-        {
-            "Tipul":np.array(["1_🥗","2_🏠","3_❄️","4_💳","5_🚌","6_💸"]),
-            "Ienuarie(2024)":np.array([lista[0],lista[1],lista[2],lista[3],lista[4],lista[5]]),
-            "Decembrie(2023)":np.array([listaIen23[0],listaIen23[1],listaIen23[2],listaIen23[3],listaIen23[4],listaIen23[5]])
-        })
-        st.line_chart(chart_data, x = "Tipul", y = ["Decembrie(2023)","Ienuarie(2024)"], color = ["#e54b22", "#abd1ff"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport               Neprevăzute")
+        if luna == "Ienuarie":    
+            chart_data = pd.DataFrame(
+            {
+                "Tipul":np.array(["1_🥗","2_🏠","3_❄️","4_💳","5_🚌","6_💸"]),
+                "Ienuarie(2024)":np.array([lista[0],lista[1],lista[2],lista[3],lista[4],lista[5]]),
+                "Decembrie(2023)":np.array([listaIen23[0],listaIen23[1],listaIen23[2],listaIen23[3],listaIen23[4],listaIen23[5]])
+            })
+            st.line_chart(chart_data, x = "Tipul", y = ["Ienuarie(2024)","Decembrie(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport               Neprevăzute")
+        else:
+            path = rf"{PathLunaPrecedenta}"
+            resultat = os.path.basename(path).replace(".txt","")
+            chart_data = pd.DataFrame(
+            {
+                "Tipul":np.array(["1_🥗","2_🏠","3_❄️","4_💳","5_🚌","6_💸"]),
+                f"{luna}":np.array([lista[0],lista[1],lista[2],lista[3],lista[4],lista[5]]),
+                f"{resultat}":np.array([listaIen23[0],listaIen23[1],listaIen23[2],listaIen23[3],listaIen23[4],listaIen23[5]])
+            })
+            st.line_chart(chart_data, x = "Tipul", y = [f"{luna}",f"{resultat}"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport               Neprevăzute")
     st.write("## ------------------------------------------------------------")
 
 
 #Chemarea functiilor
 if option == "Ienuarie":
-    Ien()
+    ChemareLuna("Ienuarie","Luni.2023\dec.txt")
+if option == "Februarie":
+    ChemareLuna("Februarie","Luni.2024\Ienuarie.txt")
+if option == "Martie":
+    ChemareLuna("Martie","Luni.2024\Februarie.txt")
+if option == "Aprilie":
+    ChemareLuna("Aprilie","Luni.2024\Martie.txt")
 
 #----------------------------------------------------------------------------------------------------------------------------------------------        
 colo1,colo2,colo3 = st.columns(3)
@@ -154,7 +183,7 @@ spactiu = colo3.write("")
 next = colo3.button("Next")
 
 if back:
-    switch_page("pașii de acțiune")
+    switch_page("welcome")
 if next:
     switch_page("analiza datelor")
 
