@@ -1,5 +1,4 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import pandas as pd
@@ -19,16 +18,11 @@ option = st.selectbox(
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #Functia de calcul a cheltuierilor pentru fiecare luna
 def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai nevoie
-    print(luna)
-    print(PathLunaPrecedenta)
-    print(os.curdir)
     with open(f"Luni.2024/{luna}.txt","r") as f:
         data = f.readlines()
         lista = []
         for i in data:
-            noN = i.replace("\n","")
-            splited = noN.split(",")
-            lista.append(float(splited[0]))
+            lista.append(int(float(i)))
     st.write("# Buget")
     #Introducerea datelor buget
     imagine = Image.open("Pictures\pexels-maitree-rimthong-444156-1602726.jpg")
@@ -39,9 +33,41 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
     total1 = salariu + venitPasiv
     with col4:
         st.header(f"Total: {total1}")
+    #Introducerea datelor cheltuieli
+    st.write("# Cheltuieli")
+    img = Image.open("Pictures\pexels-karolina-grabowska-4968631.jpg")
+    st.image(img)
+    col1,col2 = st.columns(2)
+    mancare =col1.number_input("Mâncare",value=int(float(lista[0])))
+    gazda = col1.number_input("Gazdă",value=int(float(lista[1])))
+    comunale = col1.number_input("Serviciile Comunale",value=int(float(lista[2])))
+    datorii = col2.number_input("Credite/Înprumuturi",value=int(float(lista[3])))
+    transport = col2.number_input("Transport",value=int(float(lista[4])))
+    unexpected = col2.number_input("Cheltuieli Neprevăzute",value=int(float(lista[5])))
+    total = mancare + gazda + comunale + datorii + transport + unexpected
+    col1.write(f"## Total: {total}")
+    submit = st.button("Expediază Date")
+    if submit:
+        with open(f"Luni.2024\{luna}.txt","w") as f:
+            f.write(str(mancare) + "\n")
+            f.write(str(gazda) + "\n")
+            f.write(str(comunale) + "\n")
+            f.write(str(datorii) + "\n")
+            f.write(str(transport) + "\n")
+            f.write(str(unexpected) + "\n")
+            f.write(str(total) + "\n")
+            f.write(str(salariu) + "\n")
+            f.write(str(venitPasiv) + "\n")
+            f.write(str(total1))
+    with open(f"Luni.2024\{luna}.txt","r") as f:#citim a doua oara doc ca sa nu apasam de doua ori butonul
+        data = f.readlines()
+        lista = []
+        for i in data:
+            lista.append(int(float(i)))
+    st.write("## ------------------------------------------------------------")
     #Graficul Buget
     st.write("## Graficul Bugetului")
-    radiobut = st.radio("",["Luna precedenta","Anul precedent"],horizontal=True)
+    radiobut = st.radio("",["Luna precedentă","Anul precedent"],horizontal=True)
     if radiobut == "Anul precedent":
         with open(f"Luni.2023\{luna}.txt","r") as file:
             data = file.readlines()
@@ -58,7 +84,7 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
             f"{luna}(2023)":np.array([listaIen23[7],listaIen23[8]]),
         })
         st.bar_chart(chart_data1, x = "Tipul", y = [f"{luna}(2024)",f"{luna}(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
-    if radiobut == "Luna precedenta":
+    if radiobut == "Luna precedentă":
         with open(f"{PathLunaPrecedenta}","r") as file:
             data = file.readlines()
             listaIen23 = []
@@ -85,44 +111,10 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
             })
             st.bar_chart(chart_data, x = "Tipul", y = [f"{resultat}",f"{luna}"], color = [ "#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
     st.write("## ------------------------------------------------------------")
-    #Introducerea datelor cheltuieli
-    st.write("# Cheltuieli")
-    img = Image.open("Pictures\pexels-karolina-grabowska-4968631.jpg")
-    st.image(img)
-    col1,col2 = st.columns(2)
-    mancare =col1.number_input("Mâncare",value=float(lista[0]))
-    gazda = col1.number_input("Gazdă",value=float(lista[1]) )
-    comunale = col1.number_input("Serviciile Comunale",value=float(lista[2]) )
-    datorii = col2.number_input("Credite/Înprumuturi",value=float(lista[3]) )
-    transport = col2.number_input("Transport",value=float(lista[4]) )
-    unexpected = col2.number_input("Cheltuieli Neprevăzute",value=float(lista[5]))
-    total = mancare + gazda + comunale + datorii + transport + unexpected
-    col1.write(f"## Total: {total}")
-    submit = st.button("Expediaza Date")
-    if submit:
-        with open(f"Luni.2024\{luna}.txt","w") as f:
-            f.write(str(mancare) + "\n")
-            f.write(str(gazda) + "\n")
-            f.write(str(comunale) + "\n")
-            f.write(str(datorii) + "\n")
-            f.write(str(transport) + "\n")
-            f.write(str(unexpected) + "\n")
-            f.write(str(total) + "\n")
-            f.write(str(salariu) + "\n")
-            f.write(str(venitPasiv) + "\n")
-            f.write(str(total1))
-    with open(f"Luni.2024\{luna}.txt","r") as f:#citim a doua oara doc ca sa nu apasam de doua ori butonul
-        data = f.readlines()
-        lista = []
-        for i in data:
-            noN = i.replace("\n","")
-            splited = noN.split(",")
-            lista.append(float(splited[0]))
-    st.write("## ------------------------------------------------------------")
     #Graficul Cheltuieli
     st.write("## Graficul Cheltuierilor")
-    radiobut = st.radio("",["Luna trecuta","Anul trecut"],horizontal=True)
-    if radiobut == "Anul trecut":
+    radiobut = st.radio("",["Luna precedentă","Anul preсedent"],horizontal=True)
+    if radiobut == "Anul precedent":
         with open(f"Luni.2023\{luna}.txt","r") as file:
             data = file.readlines()
             listaIen23 = []
@@ -137,7 +129,7 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
             f"{luna}(2023)":np.array([listaIen23[0],listaIen23[1],listaIen23[2],listaIen23[3],listaIen23[4],listaIen23[5]])
         })
         st.line_chart(chart_data, x = "Tipul", y = [f"{luna}(2024)",f"{luna}(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport            Neprevăzute")
-    if radiobut == "Luna trecuta":   
+    if radiobut == "Luna precedentă":   
         with open(f"{PathLunaPrecedenta}","r") as file:
             data = file.readlines()
             listaIen23 = []
@@ -175,6 +167,22 @@ if option == "Martie":
     ChemareLuna("Martie","Luni.2024\Februarie.txt")
 if option == "Aprilie":
     ChemareLuna("Aprilie","Luni.2024\Martie.txt")
+if option == "Mai":
+    ChemareLuna("Mai","Luni.2024\Aprilie.txt")
+if option == "Iunie":
+    ChemareLuna("Iunie","Luni.2024\Mai.txt")
+if option == "Iulie":
+    ChemareLuna("Iulie","Luni.2024\Iunie.txt")
+if option == "August":
+    ChemareLuna("August","Luni.2024\Iulie.txt")
+if option == "Septembrie":
+    ChemareLuna("Septembrie","Luni.2024\August.txt")
+if option == "Octombrie":
+    ChemareLuna("Octombrie","Luni.2024\Septembrie.txt")
+if option == "Noiembrie":
+    ChemareLuna("🇳oiembrie","Luni.2024\Octombrie.txt")
+if option == "Decembrie":
+    ChemareLuna("Decembrie","Luni.2024\🇳oiembrie.txt")
 
 #----------------------------------------------------------------------------------------------------------------------------------------------        
 colo1,colo2,colo3 = st.columns(3)

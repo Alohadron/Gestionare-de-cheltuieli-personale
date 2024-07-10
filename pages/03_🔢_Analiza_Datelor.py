@@ -1,5 +1,4 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import pandas as pd
@@ -14,81 +13,68 @@ img = Image.open("Pictures\img.jpg")
 st.write(img)
 #----------------------------------------------------------------------------------------------------------------------------------------------        
 #Citirea documentelor si sortarea elementelor de cheltuieli in forma totala
-path = r"C:\Users\ucalr\Desktop\Ion\Gestionare de cheltuieli personale\Luni.2023"
+path = 'Luni.2023'
 
-os.chdir(path)
+
 lista = []
 def read_text_file(file_path): 
     with open(file_path, 'r') as f: 
         lista.append(f.readlines())
 
-for file in os.listdir():
+for file in os.listdir(path):
     if file.endswith(".txt"):
         file_path = f"{path}\{file}"
         read_text_file(file_path)
 
-mancare0 = []
-gazda0 = []
-comunale0 = []
-credite0 = []
-transport0 = []
-neprevazute0 = []
-salariu0 = []
-venitpasiv0 = []
+lista_2 = []
+for elem in lista:
+    lista_3 = []
+    for elem_2 in elem:
+        lista_3.append(float(elem_2))
+    lista_2.append(lista_3)
 
-for data in lista:
-    mancare0.append(data[0])
-    gazda0.append(data[1])
-    comunale0.append(data[2])
-    credite0.append(data[3])
-    transport0.append(data[4])
-    neprevazute0.append(data[5])
-    salariu0.append(data[7])
-    venitpasiv0.append(data[8])
+df = pd.DataFrame(lista_2,columns = ["Mancare","Gazda","Servicii Comunale","Credite/Impr","Transport","Neprevazute","TotalCheltuieli","Salariu","VenitPasiv","TotalBuget"])
+#print(df)
+total_mancare = sum(df.loc[:,"Mancare"])
+total_gazda = sum(df.loc[:,"Gazda"])
+total_comunale = sum(df.loc[:,"Servicii Comunale"])
+total_credite = sum(df.loc[:,"Credite/Impr"])
+total_transport = sum(df.loc[:,"Transport"])
+total_neprevazute = sum(df.loc[:,"Neprevazute"])
+total_cheltuieli = total_mancare+total_gazda+total_gazda+total_credite+total_transport+total_neprevazute
 
-mancare = []
-gazda = []
-comunale = []
-credite = []
-transport = []
-neprevazute = []
-salariu = []
-venitpasiv = []
+total_salariu = sum(df.loc[:,"Salariu"])
+total_venitpasiv = sum(df.loc[:,"VenitPasiv"])
+total_venit = total_salariu+total_venitpasiv
 
-def filtru(x,y):
-    for i in x:
-        noN = i.replace("\n","")
-        splited = noN.split(",")
-        y.append(float(splited[0]))
-
-filtru(mancare0,mancare)
-filtru(gazda0,gazda)
-filtru(comunale0,comunale)
-filtru(credite0,credite)
-filtru(transport0,transport)
-filtru(neprevazute0,neprevazute)
-filtru(salariu0,salariu)
-filtru(venitpasiv0,venitpasiv)
+diferenta = int(total_venit - total_cheltuieli)
+media_salariu = int(total_venit/12)
 
 col4,col5 = st.columns(2)
 with col4:
     st.header("Total Cheltuieli")
     st.write(pd.DataFrame({
         "Tip": ["Mâncare","Gazdă","Servicii Comunale","Credit/Împrumuturi","Transport","Neprevăzute"],
-        "Suma" : [sum(mancare),sum(gazda),sum(comunale),sum(credite),sum(transport),sum(neprevazute)]    }))
-    st.write(f"Total:{sum(mancare)+sum(gazda)+sum(comunale)+sum(credite)+sum(transport)+sum(neprevazute)}")
+        "Suma" : [total_mancare,total_gazda,total_gazda,total_credite,total_transport,total_neprevazute]    }))
+    st.write(f"Total:{total_cheltuieli}")
 with col5:
     st.header("Total Buget")
     st.write(pd.DataFrame({
         "Tip": ["Salariu","VenitPasiv"],
-        "Suma" : [sum(salariu),sum(venitpasiv)]}))
-    st.write(f"Total:{sum(salariu)+sum(venitpasiv)} lei.")
+        "Suma" : [total_salariu,total_venitpasiv]}))
+    st.write(f"Total:{total_venit} lei.")
+
+#----------------------------------------------------------------------------------------------------------------------------------------------        
+#Punem diferenta intr-un file aparte pentru o accesa in planificare
+with open("pages\cifre.txt","w") as f:
+    f.write(str(diferenta) + "\n")
+    f.write(str(media_salariu))
 #----------------------------------------------------------------------------------------------------------------------------------------------        
 #Grafic
 chart_data = pd.DataFrame(
         {
             "Tipul":np.array(["1_🥗","2_🏠","3_❄️","4_💳","5_🚌","6_💸"]),
-            "Total":np.array([sum(mancare),sum(gazda),sum(comunale),sum(credite),sum(transport),sum(neprevazute)]),
+            "Total":np.array([total_mancare,total_gazda,total_gazda,total_credite,total_transport,total_neprevazute]),
         })
 st.line_chart(chart_data, x = "Tipul", y = "Total", color = "#abd1ff",y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport            Neprevăzute")
 
