@@ -4,7 +4,8 @@ from PIL import Image
 import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
 import os
-
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#Head
 st.write("# Expence Manager")
 st.write("- Ca să cheltui inteligent ai nevoie de un buget")
 st.write("- Selectează luna și introduce datele tale de venit și cheltuieli.")
@@ -157,7 +158,7 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
             st.line_chart(chart_data, x = "Tipul", y = [f"{luna}",f"{resultat}"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport               Neprevăzute")
     st.write("## ------------------------------------------------------------")
 
-
+#----------------------------------------------------------------------------------------------------------------------------------------------
 #Chemarea functiilor
 if option == "Ienuarie":
     ChemareLuna("Ienuarie","Luni.2023\dec.txt")

@@ -5,9 +5,8 @@ import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
 import os
 
-
 #----------------------------------------------------------------------------------------------------------------------------------------------        
-
+#Head
 st.write("# Analiza Datelor pentru anul 2023")
 img = Image.open("Pictures\img.jpg")
 st.write(img)
@@ -77,7 +76,6 @@ chart_data = pd.DataFrame(
             "Total":np.array([total_mancare,total_gazda,total_gazda,total_credite,total_transport,total_neprevazute]),
         })
 st.line_chart(chart_data, x = "Tipul", y = "Total", color = "#abd1ff",y_label="Suma",x_label="Mâncare                     Gazdă                     ServiciiC                     Credit/Împr            Transport            Neprevăzute")
-
 
 #----------------------------------------------------------------------------------------------------------------------------------------------        
 #Butoanele back/next
