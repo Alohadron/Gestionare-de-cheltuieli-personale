@@ -7,12 +7,12 @@ import os
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #Head
 st.write("# Expence Manager")
-st.write("- Ca să cheltui inteligent ai nevoie de un buget")
 st.write("- Selectează luna și introduce datele tale de venit și cheltuieli.")
-st.write("### Nota:")
-st.write("- Bugetul constă din două secțiuni: salariu și venit pasiv. Venit pasiv poate fi orice altă sursă de bani pe lângă salariu.")
+st.write("### Notă:")
+st.write("- Bugetul constă din două secțiuni: salariu și venit pasiv. Venitul pasiv poate fi orice altă sursă de bani pe lângă salariu.")
 st.write("- Cheltuieli constă din șase secțiuni: mâncare,gazdă,servicii comunale,credite/înprumuturi,transport, și cheltuieli neprevăzute ")
 st.write("- Vor fi prezente grafice pentru analiza comporatamentului de venit și cheltuieli.Datele deja introduse pot fi schimbate în orice moment")
+st.write("- Pentru ca datele introduse să fie afișate în grafice, este neapărat de apăsat butonul :blue[“Expediază date”]")
 option = st.selectbox(
     "Selecteaza luna",
     ("Ienuarie", "Februarie", "Martie","Aprilie","Mai","Iunie","Iulie","August","Septembrie","Octombrie","Noiembrie","Decembrie"),index=None)
@@ -81,10 +81,10 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
         chart_data1 = pd.DataFrame(
         {
             "Tipul":np.array(["🥗","🏠"]),
-            f"{luna}(2024)":np.array([lista[7],lista[8]]),
-            f"{luna}(2023)":np.array([listaIen23[7],listaIen23[8]]),
+            f"{luna}(2024)":np.array([lista[8],lista[7]]),
+            f"{luna}(2023)":np.array([listaIen23[8],listaIen23[7]]),
         })
-        st.bar_chart(chart_data1, x = "Tipul", y = [f"{luna}(2024)",f"{luna}(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
+        st.bar_chart(chart_data1, x = "Tipul", y = [f"{luna}(2023)",f"{luna}(2024)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
     if radiobut == "Luna precedentă":
         with open(f"{PathLunaPrecedenta}","r") as file:
             data = file.readlines()
@@ -97,8 +97,8 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
             chart_data = pd.DataFrame(
             {
                 "Tipul":np.array(["🥗","🏠"]),
-                "Ienuarie(2024)":np.array([lista[7],lista[8]]),
-                "Decembrie(2023)":np.array([listaIen23[7],listaIen23[8]])
+                "Ienuarie(2024)":np.array([lista[8],lista[7]]),
+                "Decembrie(2023)":np.array([listaIen23[8],listaIen23[7]])
             })
             st.bar_chart(chart_data, x = "Tipul", y = ["Ienuarie(2024)","Decembrie(2023)"], color = ["#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
         else:
@@ -107,15 +107,15 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
             chart_data = pd.DataFrame(
             {
                 "Tipul":np.array(["🥗","🏠"]),
-                f"{luna}":np.array([lista[7],lista[8]]),
-                f"{resultat}":np.array([listaIen23[7],listaIen23[8]])
+                f"{resultat}":np.array([listaIen23[8],listaIen23[7]]),
+                f"{luna}":np.array([lista[8],lista[7]])
             })
-            st.bar_chart(chart_data, x = "Tipul", y = [f"{resultat}",f"{luna}"], color = [ "#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
+            st.bar_chart(chart_data, x = "Tipul", y = [f"{luna}",f"{resultat}"], color = [ "#abd1ff","#e54b22"],y_label="Suma",x_label="Salariu                                                                                              Venit Pasiv")
     st.write("## ------------------------------------------------------------")
     #Graficul Cheltuieli
     st.write("## Graficul Cheltuierilor")
     radiobut = st.radio("",["Luna precedentă","Anul preсedent"],horizontal=True)
-    if radiobut == "Anul precedent":
+    if radiobut == "Anul preсedent":
         with open(f"Luni.2023\{luna}.txt","r") as file:
             data = file.readlines()
             listaIen23 = []
@@ -161,7 +161,7 @@ def ChemareLuna(luna,PathLunaPrecedenta):#pui ca parametru luni si acolo unde ai
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #Chemarea functiilor
 if option == "Ienuarie":
-    ChemareLuna("Ienuarie","Luni.2023\dec.txt")
+    ChemareLuna("Ienuarie","Luni.2023\Decembrie.txt")
 if option == "Februarie":
     ChemareLuna("Februarie","Luni.2024\Ienuarie.txt")
 if option == "Martie":
